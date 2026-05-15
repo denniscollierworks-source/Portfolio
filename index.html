@@ -3,155 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dennis — Web Designer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="style.css" />
-    <title>Wireframe Layout</title>
-    <!-- 
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-      }
-
-      body {
-        background: #f5f5f5;
-        color: #333;
-      }
-
-      /* HEADER */
-      header {
-        background: #fff;
-        padding: 20px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .logo {
-        font-weight: bold;
-      }
-
-      nav a {
-        margin-left: 20px;
-        text-decoration: none;
-        color: #333;
-      }
-
-      /* HERO */
-      .hero {
-        background: #eaeaea;
-        padding: 80px 40px;
-        text-align: center;
-      }
-
-      .hero h1 {
-        font-size: 40px;
-        margin-bottom: 10px;
-      }
-
-      .hero p {
-        font-size: 18px;
-        margin-bottom: 20px;
-      }
-
-      .btn {
-        padding: 10px 20px;
-        background: black;
-        color: white;
-        border: none;
-        cursor: pointer;
-      }
-
-      /* SECTIONS */
-      .section {
-        padding: 60px 40px;
-        background: white;
-        margin-top: 10px;
-      }
-
-      .section-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-      }
-
-      .card {
-        background: #f0f0f0;
-        padding: 20px;
-        border: 1px solid #ddd;
-        height: 120px;
-      }
-
-      /* FOOTER */
-      footer {
-        background: #111;
-        color: white;
-        text-align: center;
-        padding: 30px;
-        margin-top: 20px;
-      }
-
-      /* RESPONSIVE */
-      @media (max-width: 768px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-
-        header {
-          flex-direction: column;
-          gap: 10px;
-        }
-      }
-    </style> -->
   </head>
 
   <body>
+
     <!-- HEADER -->
     <header>
-      <div class="logo">LOGO</div>
+      <div class="logo">D<span>.</span></div>
       <nav>
-        <a href="#">Home</a>
-        <a href="#">About</a>
-        <a href="#">Services</a>
-        <a href="#">Contact</a>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
       </nav>
     </header>
 
     <!-- HERO -->
-    <section class="hero">
-      <h1>Main Heading</h1>
-      <p>Short supporting subtitle goes here</p>
-      <button class="btn">Get Started</button>
+    <section class="hero" id="home">
+      <p class="hero-eyebrow">Web Designer &amp; UI/UX Developer</p>
+      <h1>Crafting <em>interfaces</em><br>that speak clearly.</h1>
+      <p>Clean, user-friendly designs for modern digital products — built with logic, shaped by purpose.</p>
+      <button class="btn"><span>Get Started</span></button>
     </section>
 
-    <!-- SECTION 1 -->
-    <section class="section">
-      <div class="section-title">Section Title</div>
+    <!-- SECTION 1 — SERVICES -->
+    <section class="section" id="services">
+      <div class="section-header reveal">
+        <h2 class="section-title">What I Do</h2>
+        <div class="section-rule"></div>
+      </div>
       <div class="grid">
-        <div class="card">Card 1</div>
-        <div class="card">Card 2</div>
-        <div class="card">Card 3</div>
+        <div class="card reveal">
+          <span class="card-number">01</span>
+          <span class="card-label">UI Design</span>
+        </div>
+        <div class="card reveal">
+          <span class="card-number">02</span>
+          <span class="card-label">UX Research</span>
+        </div>
+        <div class="card reveal">
+          <span class="card-number">03</span>
+          <span class="card-label">Web Development</span>
+        </div>
       </div>
     </section>
 
-    <!-- SECTION 2 -->
-    <section class="section">
-      <div class="section-title">Another Section</div>
+    <!-- SECTION 2 — FEATURES -->
+    <section class="section" id="about">
+      <div class="section-header reveal">
+        <h2 class="section-title">Why Work With Me</h2>
+        <div class="section-rule"></div>
+      </div>
       <div class="grid">
-        <div class="card">Feature</div>
-        <div class="card">Feature</div>
-        <div class="card">Feature</div>
+        <div class="card reveal">
+          <span class="card-number">✦</span>
+          <span class="card-label">User-Centered</span>
+        </div>
+        <div class="card reveal">
+          <span class="card-number">✦</span>
+          <span class="card-label">Detail-Oriented</span>
+        </div>
+        <div class="card reveal">
+          <span class="card-number">✦</span>
+          <span class="card-label">Business-Focused</span>
+        </div>
       </div>
     </section>
 
     <!-- FOOTER -->
-    <footer>© 2026 Your Brand. All rights reserved.</footer>
+    <footer id="contact">
+      © 2026 <strong>Dennis</strong>. All Rights Reserved.
+    </footer>
+
+    <script src="script.js"></script>
+
   </body>
 </html>
