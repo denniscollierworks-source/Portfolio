@@ -12,11 +12,12 @@ Copy
 :root {
   --cream:   #f4efe6;
   --sand:    #e6ddd0;
-  --bark:    #c4a882;
+  --bark:    #6b21a8;      /* was tan, now royal purple */
   --ink:     #1c1c1c;
   --muted:   #7a7167;
   --white:   #fdfaf6;
   --card-bg: #eee9e0;
+  --purple-light: #ede9f6; /* soft purple tint for accents */
 }
  
 /* ─── BASE ─── */
@@ -110,7 +111,7 @@ nav a:hover::after { width: 100%; }
   position: absolute;
   width: 700px; height: 700px;
   border-radius: 50%;
-  border: 1px solid rgba(196,168,130,0.2);
+  border: 1px solid rgba(107, 33, 168, 0.2);
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -269,8 +270,8 @@ nav a:hover::after { width: 100%; }
  
 /* ─── FOOTER ─── */
 footer {
-  background: var(--ink);
-  color: rgba(244,239,230,0.6);
+  background: #3b0764;  /* deep purple instead of near-black */
+  color: rgba(244,239,230,0.7);
   text-align: center;
   padding: 2.2rem;
   margin-top: 2px;
