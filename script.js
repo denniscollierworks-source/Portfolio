@@ -1,5 +1,3 @@
-Copy;
-
 document.addEventListener("DOMContentLoaded", () => {
   // ─── MOBILE NAV TOGGLE ───
   const navToggle = document.querySelector(".nav-toggle");
