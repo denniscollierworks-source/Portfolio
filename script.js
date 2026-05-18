@@ -1,67 +1,25 @@
+Copy;
+
 document.addEventListener("DOMContentLoaded", () => {
   // ─── MOBILE NAV TOGGLE ───
   const navToggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector("nav");
-
   if (navToggle && nav) {
-    navToggle.addEventListener("click", () => {
-      nav.classList.toggle("open");
-    });
-
-    // close nav when a link is clicked
+    navToggle.addEventListener("click", () => nav.classList.toggle("open"));
     nav.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => nav.classList.remove("open"));
     });
   }
 
-  // ─── BUTTON CLICK (homepage hero) ───
-  const button = document.querySelector(".btn");
-  if (button && !button.getAttribute("href")) {
-    button.addEventListener("click", () => {
-      alert("Welcome! Let's build something great together.");
-    });
-  }
-
-  // ─── CARD INTERACTION ───
-  const cards = document.querySelectorAll(".card");
-  cards.forEach((card) => {
-    card.addEventListener("mouseenter", () => {
-      card.style.transform = "translateY(-8px)";
-      card.style.boxShadow = "0 16px 40px rgba(107,33,168,0.12)";
-      card.style.transition = "0.3s";
-    });
-
-    card.addEventListener("mouseleave", () => {
-      card.style.transform = "translateY(0)";
-      card.style.boxShadow = "none";
-    });
-  });
-
-  // ─── SMOOTH SCROLL FOR NAV LINKS ───
-  document.querySelectorAll("nav a").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      const href = link.getAttribute("href");
-      // only intercept hash-only links, let page links navigate normally
-      if (href && href.startsWith("#")) {
-        e.preventDefault();
-        const section = document.querySelector(href);
-        if (section) section.scrollIntoView({ behavior: "smooth" });
-      }
-    });
-  });
-
   // ─── SCROLL REVEAL ───
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        }
+        if (entry.isIntersecting) entry.target.classList.add("visible");
       });
     },
-    { threshold: 0.12 },
+    { threshold: 0.1 },
   );
-
   document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
   // ─── SKILL BARS (about page) ───
@@ -76,18 +34,30 @@ document.addEventListener("DOMContentLoaded", () => {
             fill.style.width = "0";
             setTimeout(() => {
               fill.style.width = target;
-            }, 100);
+            }, 150);
             skillObserver.unobserve(fill);
           }
         });
       },
-      { threshold: 0.3 },
+      { threshold: 0.4 },
     );
-
     skillFills.forEach((fill) => skillObserver.observe(fill));
   }
 
-  // ─── CONTACT FORM (contact page) ───
+  // ─── CARD HOVER (homepage) ───
+  document.querySelectorAll(".card").forEach((card) => {
+    card.addEventListener("mouseenter", () => {
+      card.style.transform = "translateY(-8px)";
+      card.style.boxShadow = "0 16px 40px rgba(107,33,168,0.12)";
+      card.style.transition = "0.3s";
+    });
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "translateY(0)";
+      card.style.boxShadow = "none";
+    });
+  });
+
+  // ─── CONTACT FORM ───
   const sendBtn = document.getElementById("send-btn");
   if (sendBtn) {
     sendBtn.addEventListener("click", () => {
@@ -100,17 +70,23 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
       const success = document.getElementById("form-success");
       if (success) success.style.display = "block";
 
-      // clear fields
-      ["name", "email", "subject", "message"].forEach((id) => {
+      ["name", "email", "phone", "subject", "message"].forEach((id) => {
         const el = document.getElementById(id);
         if (el) el.value = "";
       });
 
       sendBtn.disabled = true;
       sendBtn.querySelector("span").textContent = "Message Sent!";
+
       setTimeout(() => {
         sendBtn.disabled = false;
         sendBtn.querySelector("span").textContent = "Send Message";
@@ -243,10 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function fireworksLoop() {
     ctx.fillStyle = "rgba(26,5,51,0.18)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     fwFrame++;
     if (fwFrame % 55 === 0) fwRockets.push(new Rocket());
-
     fwRockets = fwRockets.filter((r) => {
       r.update();
       r.draw();
@@ -256,13 +230,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return true;
     });
-
     fwParticles = fwParticles.filter((p) => {
       p.update();
       p.draw();
       return p.alpha > 0;
     });
-
     requestAnimationFrame(fireworksLoop);
   }
 
