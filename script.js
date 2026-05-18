@@ -1,17 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // BUTTON CLICK
-  const button = document.querySelector(".btn");
-  button.addEventListener("click", () => {
-    alert("Welcome! Let's build something great together.");
-  });
+  // ─── MOBILE NAV TOGGLE ───
+  const navToggle = document.querySelector(".nav-toggle");
+  const nav = document.querySelector("nav");
 
-  // CARD INTERACTION
+  if (navToggle && nav) {
+    navToggle.addEventListener("click", () => {
+      nav.classList.toggle("open");
+    });
+
+    // close nav when a link is clicked
+    nav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => nav.classList.remove("open"));
+    });
+  }
+
+  // ─── BUTTON CLICK (homepage hero) ───
+  const button = document.querySelector(".btn");
+  if (button && !button.getAttribute("href")) {
+    button.addEventListener("click", () => {
+      alert("Welcome! Let's build something great together.");
+    });
+  }
+
+  // ─── CARD INTERACTION ───
   const cards = document.querySelectorAll(".card");
   cards.forEach((card) => {
-    // HOVER EFFECT
     card.addEventListener("mouseenter", () => {
       card.style.transform = "translateY(-8px)";
-      card.style.boxShadow = "0 16px 40px rgba(0,0,0,0.10)";
+      card.style.boxShadow = "0 16px 40px rgba(107,33,168,0.12)";
       card.style.transition = "0.3s";
     });
 
@@ -19,32 +35,22 @@ document.addEventListener("DOMContentLoaded", () => {
       card.style.transform = "translateY(0)";
       card.style.boxShadow = "none";
     });
-
-    // CLICK EFFECT
-    card.addEventListener("click", () => {
-      const label = card.querySelector(".card-label");
-      alert(
-        `${label ? label.textContent : card.textContent.trim()} — coming soon!`,
-      );
-    });
   });
 
-  // SMOOTH SCROLL FOR NAV LINKS
-  const navLinks = document.querySelectorAll("nav a");
-  navLinks.forEach((link) => {
+  // ─── SMOOTH SCROLL FOR NAV LINKS ───
+  document.querySelectorAll("nav a").forEach((link) => {
     link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const targetId = link.getAttribute("href");
-      if (targetId !== "#") {
-        const section = document.querySelector(targetId);
-        if (section) {
-          section.scrollIntoView({ behavior: "smooth" });
-        }
+      const href = link.getAttribute("href");
+      // only intercept hash-only links, let page links navigate normally
+      if (href && href.startsWith("#")) {
+        e.preventDefault();
+        const section = document.querySelector(href);
+        if (section) section.scrollIntoView({ behavior: "smooth" });
       }
     });
   });
 
-  // SCROLL REVEAL
+  // ─── SCROLL REVEAL ───
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -53,12 +59,70 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     },
-    { threshold: 0.15 },
+    { threshold: 0.12 },
   );
 
   document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
-  // FIREWORKS
+
+  // ─── SKILL BARS (about page) ───
+  const skillFills = document.querySelectorAll(".skill-fill");
+  if (skillFills.length) {
+    const skillObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const fill = entry.target;
+            const target = fill.style.width;
+            fill.style.width = "0";
+            setTimeout(() => {
+              fill.style.width = target;
+            }, 100);
+            skillObserver.unobserve(fill);
+          }
+        });
+      },
+      { threshold: 0.3 },
+    );
+
+    skillFills.forEach((fill) => skillObserver.observe(fill));
+  }
+
+  // ─── CONTACT FORM (contact page) ───
+  const sendBtn = document.getElementById("send-btn");
+  if (sendBtn) {
+    sendBtn.addEventListener("click", () => {
+      const name = document.getElementById("name")?.value.trim();
+      const email = document.getElementById("email")?.value.trim();
+      const message = document.getElementById("message")?.value.trim();
+
+      if (!name || !email || !message) {
+        alert("Please fill in your name, email, and message before sending.");
+        return;
+      }
+
+      const success = document.getElementById("form-success");
+      if (success) success.style.display = "block";
+
+      // clear fields
+      ["name", "email", "subject", "message"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+
+      sendBtn.disabled = true;
+      sendBtn.querySelector("span").textContent = "Message Sent!";
+      setTimeout(() => {
+        sendBtn.disabled = false;
+        sendBtn.querySelector("span").textContent = "Send Message";
+        if (success) success.style.display = "none";
+      }, 5000);
+    });
+  }
+
+  // ─── FIREWORKS (homepage only) ───
   const canvas = document.getElementById("fireworks");
+  if (!canvas) return;
+
   const ctx = canvas.getContext("2d");
 
   function resizeCanvas() {
@@ -171,8 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function explode(x, y) {
     const c1 = FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)];
     const c2 = FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)];
-    const count = Math.floor(Math.random() * 60) + 60;
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < 100; i++) {
       fwParticles.push(new Particle(x, y, i % 3 === 0 ? c2 : c1));
     }
   }
@@ -180,8 +243,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function fireworksLoop() {
     ctx.fillStyle = "rgba(26,5,51,0.18)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     fwFrame++;
     if (fwFrame % 55 === 0) fwRockets.push(new Rocket());
+
     fwRockets = fwRockets.filter((r) => {
       r.update();
       r.draw();
@@ -191,11 +256,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return true;
     });
+
     fwParticles = fwParticles.filter((p) => {
       p.update();
       p.draw();
       return p.alpha > 0;
     });
+
     requestAnimationFrame(fireworksLoop);
   }
 
