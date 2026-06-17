@@ -1,30 +1,10 @@
 import { useState, useEffect } from "react";
 
-function getTotalOpportunities(apiList, myList) {
-  return apiList.length + myList.length;
-}
-
-function getRemoteCount(apiList, myList) {
-  var allOpps = apiList.concat(myList);
-  var count = 0;
-  for (var i = 0; i < allOpps.length; i++) {
-    if (allOpps[i].isRemote === true) {
-      count++;
-    }
-  }
-  return count;
-}
-
-function getUpcomingCount(myList) {
-  var today = new Date();
-  var count = 0;
-  for (var i = 0; i < myList.length; i++) {
-    if (myList[i].date && new Date(myList[i].date) >= today) {
-      count++;
-    }
-  }
-  return count;
-}
+import {
+  getTotalOpportunities,
+  getRemoteCount,
+  getUpcomingCount,
+} from "./lib/helpers";
 
 function saveOpportunities(opportunities) {
   localStorage.setItem("fitclasses_opps", JSON.stringify(opportunities));
