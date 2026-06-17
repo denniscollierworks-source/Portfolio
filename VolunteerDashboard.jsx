@@ -4,33 +4,26 @@ function getTotalOpportunities(apiList, myList) {
   return apiList.length + myList.length;
 }
 
-// Counts how many opportunities are remote/virtual
 function getRemoteCount(apiList, myList) {
   var allOpps = apiList.concat(myList);
-  var remoteOpps = [];
-
+  var count = 0;
   for (var i = 0; i < allOpps.length; i++) {
-    var opp = allOpps[i];
-    if (opp.isRemote === true) {
-      remoteOpps.push(opp);
+    if (allOpps[i].isRemote === true) {
+      count++;
     }
   }
-
-  return remoteOpps.length;
+  return count;
 }
 
 function getUpcomingCount(myList) {
   var today = new Date();
-  var upcoming = [];
-
+  var count = 0;
   for (var i = 0; i < myList.length; i++) {
-    var opp = myList[i];
-    if (opp.date && new Date(opp.date) >= today) {
-      upcoming.push(opp);
+    if (myList[i].date && new Date(myList[i].date) >= today) {
+      count++;
     }
   }
-
-  return upcoming.length;
+  return count;
 }
 
 function saveOpportunities(opportunities) {
@@ -75,7 +68,6 @@ function Header({ total, remote, upcoming }) {
         gap: "16px",
       }}
     >
-      {/* VolunterrDashboard */}
       <div>
         <h1 style={{ margin: 0, fontSize: "24px" }}>
           🏋️ Fit Classes Volunteer Hub
@@ -84,8 +76,6 @@ function Header({ total, remote, upcoming }) {
           Find and post fitness volunteer opportunities
         </p>
       </div>
-
-      {/* Stat boxes */}
       <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
         <div
           style={{
@@ -158,20 +148,40 @@ function Footer() {
 }
 
 function OpportunityCard({ opportunity, isMyOpportunity, onDelete }) {
+  // The API returns some fields as objects, so we extract the name safely
+  var rawTitle = opportunity.title || opportunity.opportunity_title || "";
   var title =
-    opportunity.title || opportunity.opportunity_title || "Untitled Class";
+    typeof rawTitle === "object"
+      ? rawTitle.name || "Untitled Class"
+      : rawTitle || "Untitled Class";
+
+  var rawOrg = opportunity.organization || opportunity.organisation_name || "";
   var org =
-    opportunity.organization ||
-    opportunity.organisation_name ||
-    "Unknown Organization";
+    typeof rawOrg === "object"
+      ? rawOrg.name || "Unknown Organization"
+      : rawOrg || "Unknown Organization";
+
+  var rawDesc = opportunity.description || opportunity.summary || "";
   var description =
-    opportunity.description ||
-    opportunity.summary ||
-    "No description available.";
+    typeof rawDesc === "object"
+      ? rawDesc.name || "No description available."
+      : rawDesc || "No description available.";
+
+  var rawLocation = opportunity.location || opportunity.city || "";
   var location =
-    opportunity.location || opportunity.city || "Location not listed";
-  var date = opportunity.date || opportunity.start_date || "";
-  var category = opportunity.category || "Fitness";
+    typeof rawLocation === "object"
+      ? rawLocation.name || "Location not listed"
+      : rawLocation || "Location not listed";
+
+  var rawDate = opportunity.date || opportunity.start_date || "";
+  var date = typeof rawDate === "object" ? "" : rawDate;
+
+  var rawCategory = opportunity.category || "";
+  var category =
+    typeof rawCategory === "object"
+      ? rawCategory.name || "Fitness"
+      : rawCategory || "Fitness";
+
   var isVirtual = opportunity.isRemote === true || opportunity.online === true;
 
   var shortDescription = description;
@@ -191,7 +201,6 @@ function OpportunityCard({ opportunity, isMyOpportunity, onDelete }) {
         gap: "8px",
       }}
     >
-      {/* Title row */}
       <div
         style={{
           display: "flex",
@@ -202,7 +211,6 @@ function OpportunityCard({ opportunity, isMyOpportunity, onDelete }) {
       >
         <h3 style={{ margin: 0, fontSize: "16px", color: "#111" }}>{title}</h3>
         <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
-          {/* Show "My Class" badge if we created it */}
           {isMyOpportunity && (
             <span
               style={{
@@ -217,7 +225,6 @@ function OpportunityCard({ opportunity, isMyOpportunity, onDelete }) {
               My Class
             </span>
           )}
-          {/* Show "Virtual" badge if it's online */}
           {isVirtual && (
             <span
               style={{
@@ -234,8 +241,6 @@ function OpportunityCard({ opportunity, isMyOpportunity, onDelete }) {
           )}
         </div>
       </div>
-
-      {/* Organization name */}
       <p
         style={{
           margin: 0,
@@ -246,8 +251,6 @@ function OpportunityCard({ opportunity, isMyOpportunity, onDelete }) {
       >
         {org}
       </p>
-
-      {/* Description */}
       <p
         style={{
           margin: 0,
@@ -258,8 +261,6 @@ function OpportunityCard({ opportunity, isMyOpportunity, onDelete }) {
       >
         {shortDescription}
       </p>
-
-      {/* Info badges (category, location, date) */}
       <div
         style={{
           display: "flex",
@@ -304,8 +305,6 @@ function OpportunityCard({ opportunity, isMyOpportunity, onDelete }) {
           </span>
         )}
       </div>
-
-      {/* Delete button — only show on MY opportunities */}
       {isMyOpportunity && (
         <button
           onClick={function () {
@@ -336,7 +335,6 @@ function OpportunityList({
   onDelete,
   emptyMessage,
 }) {
-  // If the list is empty, show a message instead
   if (opportunities.length === 0) {
     return (
       <p
@@ -351,7 +349,6 @@ function OpportunityList({
       </p>
     );
   }
-
   return (
     <div
       style={{
@@ -376,7 +373,6 @@ function OpportunityList({
 
 function AddOpportunityForm({ onAdd }) {
   var [isOpen, setIsOpen] = useState(false);
-
   var [title, setTitle] = useState("");
   var [organization, setOrganization] = useState("");
   var [description, setDescription] = useState("");
@@ -391,7 +387,6 @@ function AddOpportunityForm({ onAdd }) {
       setErrorMessage("Please fill in the class name and organization.");
       return;
     }
-
     var newOpportunity = {
       id: "my-" + Date.now(),
       title: title,
@@ -402,9 +397,7 @@ function AddOpportunityForm({ onAdd }) {
       category: category,
       isRemote: isRemote,
     };
-
     onAdd(newOpportunity);
-
     setTitle("");
     setOrganization("");
     setDescription("");
@@ -464,15 +457,11 @@ function AddOpportunityForm({ onAdd }) {
       <h2 style={{ margin: "0 0 16px", fontSize: "18px" }}>
         Add a New Fit Class
       </h2>
-
-      {/* Show error if validation failed */}
       {errorMessage && (
         <p style={{ color: "red", fontSize: "13px", marginBottom: "12px" }}>
           {errorMessage}
         </p>
       )}
-
-      {/* Two-column grid for fields */}
       <div
         style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
       >
@@ -496,7 +485,6 @@ function AddOpportunityForm({ onAdd }) {
             placeholder="e.g. Morning Yoga Flow"
           />
         </div>
-
         <div>
           <label
             style={{
@@ -517,7 +505,6 @@ function AddOpportunityForm({ onAdd }) {
             placeholder="Gym or studio name"
           />
         </div>
-
         <div>
           <label
             style={{
@@ -535,10 +522,9 @@ function AddOpportunityForm({ onAdd }) {
             onChange={function (e) {
               setLocation(e.target.value);
             }}
-            placeholder="Address or 'Virtual'"
+            placeholder="Address or Virtual"
           />
         </div>
-
         <div>
           <label
             style={{
@@ -559,7 +545,6 @@ function AddOpportunityForm({ onAdd }) {
             }}
           />
         </div>
-
         <div>
           <label
             style={{
@@ -587,7 +572,6 @@ function AddOpportunityForm({ onAdd }) {
             })}
           </select>
         </div>
-
         <div
           style={{
             display: "flex",
@@ -612,8 +596,6 @@ function AddOpportunityForm({ onAdd }) {
             Virtual / Online class
           </label>
         </div>
-
-        {/* Description spans both columns */}
         <div style={{ gridColumn: "1 / -1" }}>
           <label
             style={{
@@ -636,8 +618,6 @@ function AddOpportunityForm({ onAdd }) {
           />
         </div>
       </div>
-
-      {/* Form buttons */}
       <div
         style={{
           display: "flex",
@@ -687,11 +667,7 @@ function MyOpportunities({ myOpportunities, onDelete, onAdd }) {
       <h2 style={{ fontSize: "18px", marginBottom: "16px" }}>
         My Fit Class Opportunities ({myOpportunities.length})
       </h2>
-
-      {/* Form to add a new one */}
       <AddOpportunityForm onAdd={onAdd} />
-
-      {/* List of my saved opportunities */}
       <OpportunityList
         opportunities={myOpportunities}
         isMyOpportunities={true}
@@ -702,36 +678,23 @@ function MyOpportunities({ myOpportunities, onDelete, onAdd }) {
   );
 }
 
-export default function App() {
+export default function VolunteerDashboard() {
   var [apiOpportunities, setApiOpportunities] = useState([]);
-
   var [myOpportunities, setMyOpportunities] = useState(loadOpportunities());
-
   var [loading, setLoading] = useState(true);
-
   var [errorMessage, setErrorMessage] = useState("");
-
-  // searchQuery: what the user typed in the search box
   var [searchQuery, setSearchQuery] = useState("");
-
-  // selectedCategory: which category the user picked from the dropdown
   var [selectedCategory, setSelectedCategory] = useState("All Types");
-
-  // activeTab: which tab is showing — "browse" or "mine"
   var [activeTab, setActiveTab] = useState("browse");
 
-  // --- EFFECT: Fetch from API when page loads or search changes ---
   useEffect(
     function () {
       setLoading(true);
       setErrorMessage("");
-
-      // Build the URL with search parameters
       var url =
         "https://www.volunteerconnector.org/api/search/?search=" +
-        (searchQuery || "fitness") +
-        "&limit=30";
-
+        (searchQuery || "fitness classes health exercise yoga") +
+        "&limit=50";
       fetch(url)
         .then(function (response) {
           if (!response.ok) {
@@ -740,7 +703,6 @@ export default function App() {
           return response.json();
         })
         .then(function (data) {
-          // The API returns either an array or an object with a results key
           var results = [];
           if (Array.isArray(data)) {
             results = data;
@@ -751,16 +713,13 @@ export default function App() {
           setLoading(false);
         })
         .catch(function () {
-          setErrorMessage(
-            "Unable to load volunteer opportunities. Please check your connection.",
-          );
+          setErrorMessage("Unable to load volunteer opportunities.");
           setLoading(false);
         });
     },
     [searchQuery],
-  ); // Re-runs whenever searchQuery changes
+  );
 
-  // --- EFFECT: Save myOpportunities to localStorage whenever it changes ---
   useEffect(
     function () {
       saveOpportunities(myOpportunities);
@@ -768,15 +727,11 @@ export default function App() {
     [myOpportunities],
   );
 
-  // --- HANDLERS ---
-
-  // Called when user submits the Add form
   function handleAdd(newOpportunity) {
     var updated = [newOpportunity].concat(myOpportunities);
     setMyOpportunities(updated);
   }
 
-  // Called when user clicks Delete on one of their opportunities
   function handleDelete(id) {
     var updated = myOpportunities.filter(function (opp) {
       return opp.id !== id;
@@ -784,41 +739,98 @@ export default function App() {
     setMyOpportunities(updated);
   }
 
-  // --- FILTERING ---
-  // Filter the API results by search query and category
+  // Keywords that indicate a fitness-related opportunity
+  var fitnessKeywords = [
+    "fitness",
+    "yoga",
+    "pilates",
+    "hiit",
+    "cardio",
+    "gym",
+    "exercise",
+    "workout",
+    "zumba",
+    "dance",
+    "crossfit",
+    "strength",
+    "cycling",
+    "spin",
+    "barre",
+    "health",
+    "wellness",
+    "sport",
+    "athletic",
+    "training",
+    "class",
+    "stretching",
+    "aerobic",
+    "martial arts",
+    "swimming",
+    "active",
+    "movement",
+  ];
+
   var filteredApiOpps = apiOpportunities.filter(function (opp) {
-    var title = (opp.title || opp.opportunity_title || "").toLowerCase();
-    var org = (opp.organization || opp.organisation_name || "").toLowerCase();
-    var query = searchQuery.toLowerCase();
+    var rawTitle = opp.title || opp.opportunity_title || "";
+    var title = String(
+      typeof rawTitle === "object" ? rawTitle.name || "" : rawTitle,
+    ).toLowerCase();
 
-    var matchesSearch = title.includes(query) || org.includes(query);
+    var rawOrg = opp.organization || opp.organisation_name || "";
+    var org = String(
+      typeof rawOrg === "object" ? rawOrg.name || "" : rawOrg,
+    ).toLowerCase();
+
+    var rawDesc = opp.description || opp.summary || "";
+    var desc = String(
+      typeof rawDesc === "object" ? rawDesc.name || "" : rawDesc,
+    ).toLowerCase();
+
+    var rawCategory = opp.category || "";
+    var cat = String(
+      typeof rawCategory === "object" ? rawCategory.name || "" : rawCategory,
+    ).toLowerCase();
+
+    // Only show if it matches a fitness keyword
+    var isFitness = fitnessKeywords.some(function (keyword) {
+      return (
+        title.includes(keyword) ||
+        desc.includes(keyword) ||
+        cat.includes(keyword) ||
+        org.includes(keyword)
+      );
+    });
+
+    // Also apply the user's search and category filter
+    var query = searchQuery.toLowerCase();
+    var matchesSearch =
+      !query ||
+      title.includes(query) ||
+      org.includes(query) ||
+      desc.includes(query);
     var matchesCategory =
       selectedCategory === "All Types" ||
-      (opp.category || "").toLowerCase() === selectedCategory.toLowerCase();
+      cat === selectedCategory.toLowerCase();
 
-    return matchesSearch && matchesCategory;
+    return isFitness && matchesSearch && matchesCategory;
   });
 
-  // Filter MY opportunities by search query and category
   var filteredMyOpps = myOpportunities.filter(function (opp) {
-    var title = (opp.title || "").toLowerCase();
-    var org = (opp.organization || "").toLowerCase();
+    var title = String(opp.title || "").toLowerCase();
+    var org = String(opp.organization || "").toLowerCase();
     var query = searchQuery.toLowerCase();
-
     var matchesSearch = title.includes(query) || org.includes(query);
     var matchesCategory =
       selectedCategory === "All Types" ||
-      (opp.category || "").toLowerCase() === selectedCategory.toLowerCase();
-
+      String(opp.category || "").toLowerCase() ===
+        selectedCategory.toLowerCase();
     return matchesSearch && matchesCategory;
   });
 
-  // --- BUSINESS LOGIC STATS ---
   var total = getTotalOpportunities(apiOpportunities, myOpportunities);
   var remoteCount = getRemoteCount(apiOpportunities, myOpportunities);
   var upcomingCount = getUpcomingCount(myOpportunities);
 
-  // --- RENDER ---
   return (
     <div
       style={{
@@ -827,12 +839,8 @@ export default function App() {
         fontFamily: "system-ui, sans-serif",
       }}
     >
-      {/* Header with stats */}
       <Header total={total} remote={remoteCount} upcoming={upcomingCount} />
-
-      {/* Main content area */}
       <main style={{ maxWidth: "1100px", margin: "0 auto", padding: "24px" }}>
-        {/* Search and Filter bar */}
         <div
           style={{
             display: "flex",
@@ -879,7 +887,6 @@ export default function App() {
           </select>
         </div>
 
-        {/* Tab buttons */}
         <div
           style={{
             display: "flex",
@@ -931,10 +938,8 @@ export default function App() {
           </button>
         </div>
 
-        {/* BROWSE TAB — shows API results */}
         {activeTab === "browse" && (
           <div>
-            {/* Loading state */}
             {loading && (
               <p
                 style={{ textAlign: "center", color: "#888", padding: "40px" }}
@@ -942,15 +947,11 @@ export default function App() {
                 Loading Opportunities...
               </p>
             )}
-
-            {/* Error state */}
             {!loading && errorMessage && (
               <p style={{ textAlign: "center", color: "red", padding: "40px" }}>
                 Unable to load volunteer opportunities
               </p>
             )}
-
-            {/* Results */}
             {!loading && !errorMessage && (
               <div>
                 <p
@@ -974,7 +975,6 @@ export default function App() {
           </div>
         )}
 
-        {/* MY CLASSES TAB — shows user-created opportunities */}
         {activeTab === "mine" && (
           <MyOpportunities
             myOpportunities={filteredMyOpps}
@@ -983,7 +983,6 @@ export default function App() {
           />
         )}
       </main>
-
       <Footer />
     </div>
   );
